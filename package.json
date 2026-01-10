@@ -1,0 +1,24 @@
+{
+  "name": "city-signals-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acalvet97/city-signals-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/acalvet97/city-signals-api/issues"
+  },
+  "homepage": "https://github.com/acalvet97/city-signals-api#readme",
+  "devDependencies": {
+    "@redocly/cli": "^2.14.4"
+  }
+}

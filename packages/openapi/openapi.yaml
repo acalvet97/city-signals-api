@@ -5,13 +5,25 @@ info:
   description: >
     Public API exposing normalized urban signals (status/score/confidence)
     for mobility apps, dashboards, and civic products.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
 servers:
+  - url: https://api.citysignals.dev
+    description: Production (planned)
   - url: http://localhost:3000
+    description: Local development
+
+security:
+  - ApiKeyAuth: []
+
 paths:
   /health:
     get:
       summary: Health check
       operationId: getHealth
+      security: [] # explicitly public endpoint
       responses:
         "200":
           description: OK
@@ -28,3 +40,52 @@ paths:
                   version:
                     type: string
                 required: [status, service, version]
+                
+        "429":
+          description: Too many requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+        "503":
+          description: Service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    Problem:
+      type: object
+      description: RFC 7807 compatible problem details
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://errors.citysignals.dev/service-unavailable
+        title:
+          type: string
+          example: Service unavailable
+        status:
+          type: integer
+          example: 503
+        detail:
+          type: string
+          example: "Temporary outage. Please retry."
+        instance:
+          type: string
+          example: /health
+        traceId:
+          type: string
+          description: Correlation id for support/debug
+          example: 01J0K3H2J9E8M7N6P5Q4R3S2T1
+      required: [type, title, status]
+           
