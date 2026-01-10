@@ -1,0 +1,30 @@
+openapi: 3.1.0
+info:
+  title: City Signals API
+  version: 1.0.0
+  description: >
+    Public API exposing normalized urban signals (status/score/confidence)
+    for mobility apps, dashboards, and civic products.
+servers:
+  - url: http://localhost:3000
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  service:
+                    type: string
+                  version:
+                    type: string
+                required: [status, service, version]
