@@ -6,8 +6,6 @@ It provides normalized and interpretable signals that describe the contextual st
 
 This project is intentionally scoped to demonstrate **product thinking through API design**, rather than data infrastructure or real-time accuracy.
 
----
-
 ## Why City Signals?
 
 Many digital products operating in urban environments need answers to questions like:
@@ -25,8 +23,6 @@ Solving these questions from scratch usually requires:
 
 **City Signals abstracts this complexity** and exposes **signals designed for decision-making**, not raw metrics.
 
----
-
 ## What is a Signal?
 
 In City Signals, a **Signal** is:
@@ -41,8 +37,6 @@ Each signal:
 
 If something does not meet these criteria, it is intentionally **not** considered a signal.
 
----
-
 ## Core Signals (v1)
 
 City Signals v1 focuses on a **small, transversal, and opinionated** set of signals:
@@ -56,8 +50,6 @@ Used to:
 - trigger features
 - time product actions
 
----
-
 ### Density
 **Question:**  
 How concentrated is the activity in this area?
@@ -65,8 +57,6 @@ How concentrated is the activity in this area?
 Distinguishes between:
 - dispersed activity
 - concentrated activity
-
----
 
 ### Temporal Intensity
 **Question:**  
@@ -76,8 +66,6 @@ Helps differentiate:
 - recurring patterns
 - isolated events
 
----
-
 ### Stability
 **Question:**  
 How stable or volatile is the current state?
@@ -85,8 +73,6 @@ How stable or volatile is the current state?
 Useful for:
 - risk assessment
 - conservative vs aggressive decisions
-
----
 
 ### Confidence
 **Question:**  
@@ -96,8 +82,6 @@ Enables:
 - UX degradation strategies
 - fallback logic
 - informed product decisions
-
----
 
 ## What City Signals Does (and Does Not Do)
 
@@ -114,8 +98,6 @@ Enables:
 - optimize for a specific vertical
 - aim for absolute accuracy
 
----
-
 ## Intended Audience
 
 City Signals is designed for:
@@ -125,8 +107,6 @@ City Signals is designed for:
 
 That need:
 > urban context without becoming experts in urban data.
-
----
 
 ## About the Data
 
@@ -140,8 +120,6 @@ The purpose of this project is not to provide accurate or real-time urban data, 
 
 This approach keeps the project intentionally focused on **product thinking** rather than data sourcing or infrastructure complexity.
 
----
-
 ## Project Goal
 
 The goal of City Signals is not feature completeness.
@@ -152,12 +130,8 @@ It is to demonstrate:
 - intentional trade-offs
 - consumer-oriented contracts
 
----
-
 ## Status
 
 City Signals is an **educational and demonstrative project**.
 
 It is not production-ready.
-
----
