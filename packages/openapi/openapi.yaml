@@ -40,7 +40,7 @@ paths:
                   version:
                     type: string
                 required: [status, service, version]
-                
+
         "429":
           description: Too many requests
           content:
@@ -88,4 +88,91 @@ components:
           description: Correlation id for support/debug
           example: 01J0K3H2J9E8M7N6P5Q4R3S2T1
       required: [type, title, status]
+        
+    SignalType:
+      type: string
+      description: Product-level categories (extensible)
+      enum: [parking, traffic, air_quality, noise, transit]
+
+    SignalStatus:
+      type: string
+      description: Normalized status for product consumption
+      enum: [good, moderate, poor, unknown]
+
+    SignalSource:
+      type: object
+      properties:
+        name:
+          type: string
+          example: City Open Data Portal
+        kind:
+          type: string
+          enum: [open_data, partner, sensor, derived]
+          example: open_data
+        url:
+          type: [string, "null"]
+          format: uri
+      required: [name, kind]
+
+    Signal:
+      type: object
+      description: Normalized, product-ready signal
+      properties:
+        id:
+          type: string
+          description: Stable id (namespaced)
+          example: bcn.parking.availability
+        cityId:
+          type: string
+          example: bcn
+        type:
+          $ref: "#/components/schemas/SignalType"
+        status:
+          $ref: "#/components/schemas/SignalStatus"
+        score:
+          type: integer
+          description: 0–100 normalized score
+          minimum: 0
+          maximum: 100
+          example: 72
+        confidence:
+          type: number
+          description: 0–1 confidence for the normalized status/score
+          minimum: 0
+          maximum: 1
+          example: 0.84
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2026-01-10T10:15:00Z
+        summary:
+          type: string
+          description: Human-readable summary for dashboards
+          example: Parking availability is good near the city center.
+        sources:
+          type: array
+          description: High-level provenance (no raw payloads)
+          items:
+            $ref: "#/components/schemas/SignalSource"
+      required: [id, cityId, type, status, score, confidence, updatedAt]
+
+    PageInfo:
+      type: object
+      properties:
+        nextCursor:
+          type: [string, "null"]
+          description: Cursor to fetch next page, null if none
+      required: [nextCursor]
+
+    PaginatedSignalsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Signal"
+        page:
+          $ref: "#/components/schemas/PageInfo"
+      required: [data, page]
+
            
