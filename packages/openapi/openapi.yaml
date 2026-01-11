@@ -120,6 +120,59 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /v1/signals/{signalId}:
+    get:
+      summary: Get signal details by id
+      operationId: getSignalById
+      description: Returns detailed information about a specific signal, including its current value and interpretation metadata.
+      parameters:
+        - name: signalId
+          in: path
+          required: true
+          description: Stable identifier of the signal.
+          schema:
+            type: string
+            example: bcn.parking.availability
+      responses:
+        "200":
+          description: Signal details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignalDetail"
+        "400":
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+        "404":
+          description: Signal not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          description: Too many requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+
 
 components:
   securitySchemes:
@@ -261,4 +314,135 @@ components:
           $ref: "#/components/schemas/PageInfo"
       required: [data, page]
 
-           
+    SignalDetail:
+      type: object
+      description: Detailed, product-level view of a single signal.
+      properties:
+        id:
+          type: string
+          description: Stable signal identifier (namespaced).
+          example: bcn.parking.availability
+
+        name:
+          type: string
+          description: Human-readable name of the signal.
+          example: Parking Availability
+
+        cityId:
+          type: string
+          description: City identifier (ISO-like short code).
+          example: bcn
+
+        type:
+          $ref: "#/components/schemas/SignalType"
+
+        status:
+          $ref: "#/components/schemas/SignalStatus"
+
+        score:
+          type: integer
+          description: Normalized score (0–100).
+          minimum: 0
+          maximum: 100
+          example: 72
+
+        confidence:
+          type: number
+          description: Confidence level for the score/status normalization.
+          minimum: 0
+          maximum: 1
+          example: 0.84
+
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO timestamp of last signal update.
+          example: 2026-01-10T10:15:00Z
+
+        summary:
+          type: string
+          description: Short human-readable summary.
+          example: Parking availability is good across most central areas.
+
+        interpretation:
+          type: object
+          description: Metadata explaining how to interpret and use the signal.
+          properties:
+            whatItMeans:
+              type: string
+              example: Higher scores indicate greater parking availability.
+            recommendedUse:
+              type: array
+              items:
+                type: string
+              example: [navigation, dashboards, alerts]
+            updateCadence:
+              type: string
+              example: hourly
+            method:
+              type: string
+              description: Synthetic or real method used to compute the signal.
+              example: synthetic-model-v1
+          required: [whatItMeans, updateCadence, method]
+
+        coverage:
+          type: object
+          description: Geographic coverage of the signal.
+          properties:
+            scope:
+              type: string
+              enum: [city]
+              example: city
+            areaId:
+              type: string
+              example: barcelona
+            areaName:
+              type: string
+              example: Barcelona
+          required: [scope, areaId, areaName]
+
+        sources:
+          type: array
+          description: High-level provenance sources for this signal.
+          items:
+            $ref: "#/components/schemas/SignalSource"
+
+        links:
+          type: object
+          description: Related API links.
+          properties:
+            self:
+              type: string
+              example: /v1/signals/bcn.parking.availability
+            list:
+              type: string
+              example: /v1/signals
+          required: [self, list]
+
+        meta:
+          type: object
+          description: Metadata about how this response was generated.
+          properties:
+            version:
+              type: string
+              example: "1"
+            generated:
+              type: boolean
+              example: true
+          required: [version, generated]
+
+      required:
+        [
+          id,
+          name,
+          cityId,
+          type,
+          status,
+          score,
+          confidence,
+          updatedAt,
+          interpretation,
+          coverage,
+          links,
+          meta
+        ]     
