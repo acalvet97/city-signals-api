@@ -172,8 +172,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-
-
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -227,7 +225,7 @@ components:
           description: Correlation id for support/debug
           example: 01J0K3H2J9E8M7N6P5Q4R3S2T1
       required: [type, title, status]
-        
+
     SignalType:
       type: string
       description: Product-level categories (extensible)
@@ -252,6 +250,20 @@ components:
           type: [string, "null"]
           format: uri
       required: [name, kind]
+
+    SignalHistoryPoint:
+      type: object
+      properties:
+        at:
+          type: string
+          format: date-time
+          example: 2026-01-10T10:00:00Z
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 68
+      required: [at, score]
 
     Signal:
       type: object
@@ -293,7 +305,7 @@ components:
           description: High-level provenance (no raw payloads)
           items:
             $ref: "#/components/schemas/SignalSource"
-      required: [id, cityId, type, status, score, confidence, updatedAt]
+      required: [id, cityId, type, status, score, confidence, updatedAt, summary, sources]
 
     PageInfo:
       type: object
@@ -315,134 +327,29 @@ components:
       required: [data, page]
 
     SignalDetail:
-      type: object
-      description: Detailed, product-level view of a single signal.
-      properties:
-        id:
-          type: string
-          description: Stable signal identifier (namespaced).
-          example: bcn.parking.availability
-
-        name:
-          type: string
-          description: Human-readable name of the signal.
-          example: Parking Availability
-
-        cityId:
-          type: string
-          description: City identifier (ISO-like short code).
-          example: bcn
-
-        type:
-          $ref: "#/components/schemas/SignalType"
-
-        status:
-          $ref: "#/components/schemas/SignalStatus"
-
-        score:
-          type: integer
-          description: Normalized score (0–100).
-          minimum: 0
-          maximum: 100
-          example: 72
-
-        confidence:
-          type: number
-          description: Confidence level for the score/status normalization.
-          minimum: 0
-          maximum: 1
-          example: 0.84
-
-        updatedAt:
-          type: string
-          format: date-time
-          description: ISO timestamp of last signal update.
-          example: 2026-01-10T10:15:00Z
-
-        summary:
-          type: string
-          description: Short human-readable summary.
-          example: Parking availability is good across most central areas.
-
-        interpretation:
-          type: object
-          description: Metadata explaining how to interpret and use the signal.
+      allOf:
+        - $ref: "#/components/schemas/Signal"
+        - type: object
+          description: Detailed, product-level view of a single signal (MVP).
           properties:
-            whatItMeans:
+            description:
               type: string
-              example: Higher scores indicate greater parking availability.
-            recommendedUse:
+              description: Extended human-readable description of the signal.
+              example: Synthetic model estimate of curbside parking availability based on recent patterns and city context.
+            history:
               type: array
+              description: Recent score history (synthetic).
               items:
-                type: string
-              example: [navigation, dashboards, alerts]
-            updateCadence:
-              type: string
-              example: hourly
-            method:
-              type: string
-              description: Synthetic or real method used to compute the signal.
-              example: synthetic-model-v1
-          required: [whatItMeans, updateCadence, method]
-
-        coverage:
-          type: object
-          description: Geographic coverage of the signal.
-          properties:
-            scope:
-              type: string
-              enum: [city]
-              example: city
-            areaId:
-              type: string
-              example: barcelona
-            areaName:
-              type: string
-              example: Barcelona
-          required: [scope, areaId, areaName]
-
-        sources:
-          type: array
-          description: High-level provenance sources for this signal.
-          items:
-            $ref: "#/components/schemas/SignalSource"
-
-        links:
-          type: object
-          description: Related API links.
-          properties:
-            self:
-              type: string
-              example: /v1/signals/bcn.parking.availability
-            list:
-              type: string
-              example: /v1/signals
-          required: [self, list]
-
-        meta:
-          type: object
-          description: Metadata about how this response was generated.
-          properties:
-            version:
-              type: string
-              example: "1"
-            generated:
-              type: boolean
-              example: true
-          required: [version, generated]
-
-      required:
-        [
-          id,
-          name,
-          cityId,
-          type,
-          status,
-          score,
-          confidence,
-          updatedAt,
-          interpretation,
-          coverage,
-          links,
-          meta
-        ]     
+                $ref: "#/components/schemas/SignalHistoryPoint"
+            links:
+              type: object
+              description: Related API links.
+              properties:
+                self:
+                  type: string
+                  example: /v1/signals/bcn.parking.availability
+                list:
+                  type: string
+                  example: /v1/signals
+              required: [self, list]
+          required: [description, history, links]
